@@ -22,11 +22,10 @@ class Rectangle {
     }
     // verifica si este objeto se intersecta con otro objeto Rectangle
     intersects ( range ){
-        let a =  new Point(range.x,range.y,this.userData);
-        if(this.contains(a)){
-            return true;
-        }else{
+        if(range.x-range.w > this.x+this.w || range.x+this.w < this.x-this.w || range.y-range.h > this.y+this.h || range.y+this.h < this.y-this.h){
             return false;
+        }else{
+            return true;
         }
     }
 }
@@ -72,6 +71,23 @@ class QuadTree {
             this . northwest . insert ( point );
             this . southeast . insert ( point );
             this . southwest . insert ( point );
+        }
+    }
+    query(range,found){
+        if(!this.boundary.intersects(range)){
+            return;
+        }
+        for(var i=0;i<this.points.length;i++){
+            count++;
+            if(range.contains(this.points[i])){
+                found.push(this.points[i]);
+            }
+        }
+        if(this.divided){
+            this.northeast.query(range,found);
+            this.northwest.query(range,found);
+            this.southeast.query(range,found);
+            this.southwest.query(range,found);
         }
     }
     show () {
